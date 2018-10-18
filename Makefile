@@ -1,5 +1,6 @@
 TEST?=./...
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
+TAG?=latest
 
 default: build
 
@@ -22,6 +23,9 @@ vet:
 		echo "and fix them if necessary before submitting the code for review."; \
 		exit 1; \
 	fi
+
+docker:
+	docker build -t ewilde/kms-template:$(TAG) .
 
 fmt:
 	gofmt -w $(GOFMT_FILES)

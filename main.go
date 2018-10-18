@@ -1,10 +1,11 @@
 package main
 
 import (
-	"os"
-	"strings"
-
 	"github.com/ewilde/kms-template/internal/pkg/kms"
+	"os"
+	"os/signal"
+	"strings"
+	"syscall"
 )
 
 func main() {
@@ -20,6 +21,15 @@ func realMain() int {
 
 
 	w := kms.NewFileWriter()
-	w.CreateSecrets(strings.Split(keys, ","))
+	err := w.CreateSecrets(strings.Split(keys, ",")); if err !=nil {
+		log.Error(err)
+		return 1
+	}
+
+	log.Info("Completed templating secrets")
+	var gracefulStop = make(chan os.Signal)
+	signal.Notify(gracefulStop, syscall.SIGTERM)
+	signal.Notify(gracefulStop, syscall.SIGINT)
+	_ = <-gracefulStop
 	return 0
 }

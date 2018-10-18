@@ -26,6 +26,7 @@ func NewFileWriter() *FileWriter {
 }
 
 func (fw *FileWriter) CreateSecrets(keys []string) error {
+	fw.log.Infof("Creating secrets in %s", fw.Path)
 	for _, v := range keys {
 		err := fw.createSecret(v)
 		if err != nil {
@@ -37,6 +38,8 @@ func (fw *FileWriter) CreateSecrets(keys []string) error {
 }
 
 func (fw *FileWriter) createSecret(v string) error {
+	fw.log.Infof("Creating secret in %s", path.Join(fw.Path, v))
+
 	secret, err := fw.client.GetSecretValue(&secretsmanager.GetSecretValueInput{
 		SecretId: aws.String(v),
 	})
